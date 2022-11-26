@@ -20,8 +20,6 @@ describe('Seu teste', () => {
 
   const userMock = {
     username: 'Baleno',
-    role: 'user',
-    email: 'baleno@user.com',
     password: '$2a$08$Y8Abi8jXvsXyqm.rmp0B.uQBA5qUz7T6Ghlg/CvVr/gLxYj5UAZVO', 
   };
 
@@ -36,7 +34,7 @@ describe('Seu teste', () => {
   })
 
   it('should return the user information', async () => {
-    const chaiHttpResponse = await chai.request(app).post('/user').send(userMock);
+    const chaiHttpResponse = await chai.request(app).post('/login').send(userMock);
 
     expect(chaiHttpResponse.status).to.be.equal(201);
     expect(chaiHttpResponse.body).to.be.deep.equal(userMock);
