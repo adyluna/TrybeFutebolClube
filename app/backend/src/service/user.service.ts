@@ -8,6 +8,7 @@ export default class UserService {
 
   login = async (email: string, password: string): Promise<string> => {
     const userInfo = await UserModel.findOne({ where: { email } });
+    console.log(userInfo);
 
     if (!userInfo || !compareSync(password, userInfo.password as string)) {
       throw new HttpException(401, 'Incorrect email or password');
