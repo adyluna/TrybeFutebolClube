@@ -9,4 +9,11 @@ export default class UserController {
     const token = await this._userService.login(email, password);
     return res.status(200).json({ token });
   };
+
+  validateToken = (req: Request, res: Response) => {
+    const { authorization } = req.headers;
+    const role = this._userService.validateLogin(authorization as string);
+
+    return res.status(200).json({ role });
+  };
 }

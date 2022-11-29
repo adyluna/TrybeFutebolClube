@@ -18,12 +18,14 @@ export const loginWithoutPassword = {
   email: 'admin@admin.com',
 };
 
-export const wrongLoginEmail = {
+export const incorrectLoginEmail = {
   email: 'wrong@wrong.com',
   password: 'secret_admin',
 }
 
-export const wrongLoginPassword = {
+export const incorrectLoginPassword = {
   email: 'admin@admin.com',
   password: 'wrong_password',
 }
+
+export const validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2Njk3Mzk4NTZ9.tO3ulyg9L7lsPjd9Vykyqu3yD99KByegtHSG_G2Q5js";

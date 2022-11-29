@@ -5,7 +5,12 @@ import chaiHttp = require('chai-http');
 
 import App from '../app';
 import UserModel from '../database/models/UserModel';
-import { validUser, validLogin, loginWithoutEmail, loginWithoutPassword, wrongLoginEmail, wrongLoginPassword } from './mocks';
+import { 
+  validToken,
+  validUser,
+  validLogin,
+  loginWithoutEmail,
+  loginWithoutPassword, incorrectLoginEmail, incorrectLoginPassword } from './mocks';
 
 import { Response } from 'superagent';
 
@@ -50,17 +55,24 @@ describe('Integration tests', () => {
   });
 
   it('should return failed login message when the login have an invalid email', async () => {
-    const chaiHttpResponse = await chai.request(app).post('/login').send(wrongLoginEmail);
-
+    const chaiHttpResponse = await chai.request(app).post('/login').send(incorrectLoginEmail);
+    
     expect(chaiHttpResponse.status).to.be.equal(401);
     expect(chaiHttpResponse.body.message).to.deep.equal('Incorrect email or password');
   });
 
   it('should return failed login message when the login have a invalid password', async () => {
-    const chaiHttpResponse = await chai.request(app).post('/login').send(wrongLoginPassword);
+    const chaiHttpResponse = await chai.request(app).post('/login').send(incorrectLoginPassword);
 
     expect(chaiHttpResponse.status).to.be.equal(401);
     expect(chaiHttpResponse.body.message).to.deep.equal('Incorrect email or password');
   });
+
+  it('should return the user role if the token is valid', async () => {
+    const chaiHttpResponse = await chai.request(app).get('/login/validate').set('authorization', validToken);
+    
+    expect(chaiHttpResponse.status).to.be.equal(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal({ role: 'admin' });
+  })
 
 });
