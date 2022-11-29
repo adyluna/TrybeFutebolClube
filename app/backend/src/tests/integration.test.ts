@@ -5,7 +5,7 @@ import chaiHttp = require('chai-http');
 
 import App from '../app';
 import UserModel from '../database/models/UserModel';
-import { invalidUser, validUser, validLogin, loginWithoutEmail, loginWithoutPassword } from './mocks';
+import { validUser, validLogin, loginWithoutEmail, loginWithoutPassword, wrongLoginEmail, wrongLoginPassword } from './mocks';
 
 import { Response } from 'superagent';
 
@@ -42,11 +42,25 @@ describe('Integration tests', () => {
     expect(chaiHttpResponse.body.message).to.deep.equal('All fields must be filled');
   });
 
-  it('should return failed login message when the login dont have an email', async () => {
+  it('should return failed login message when the login dont have a password', async () => {
     const chaiHttpResponse = await chai.request(app).post('/login').send(loginWithoutPassword);
 
     expect(chaiHttpResponse.status).to.be.equal(400);
     expect(chaiHttpResponse.body.message).to.deep.equal('All fields must be filled');
+  });
+
+  it('should return failed login message when the login have an invalid email', async () => {
+    const chaiHttpResponse = await chai.request(app).post('/login').send(wrongLoginEmail);
+
+    expect(chaiHttpResponse.status).to.be.equal(401);
+    expect(chaiHttpResponse.body.message).to.deep.equal('Incorrect email or password');
+  });
+
+  it('should return failed login message when the login have a invalid password', async () => {
+    const chaiHttpResponse = await chai.request(app).post('/login').send(wrongLoginPassword);
+
+    expect(chaiHttpResponse.status).to.be.equal(401);
+    expect(chaiHttpResponse.body.message).to.deep.equal('Incorrect email or password');
   });
 
 });
