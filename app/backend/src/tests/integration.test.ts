@@ -14,16 +14,21 @@ const { app } = new App();
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
-
-  let chaiHttpResponse: Response;
+describe('Integration tests', () => {
 
   const userMock = {
-    username: 'Baleno',
-    password: '$2a$08$Y8Abi8jXvsXyqm.rmp0B.uQBA5qUz7T6Ghlg/CvVr/gLxYj5UAZVO', 
+      username: 'Admin',
+      role: 'admin',
+      email: 'admin@admin.com',
+      password: '$2a$08$xi.Hxk1czAO0nZR..B393u10aED0RQ1N3PAEXQ7HxtLjKPEZBu.PW'
+    }
+
+  const loginMock = {
+    email: 'admin@admin.com',
+    password: 'secret_admin', 
   };
 
-  before(async () => {
+  before(() => {
     sinon
       .stub(UserModel, "findOne")
       .resolves(userMock as UserModel);
@@ -33,11 +38,11 @@ describe('Seu teste', () => {
     (UserModel.findOne as sinon.SinonStub).restore();
   })
 
-  it('should return the user information', async () => {
-    const chaiHttpResponse = await chai.request(app).post('/login').send(userMock);
+  it('should return the user token', async () => {
+    const chaiHttpResponse = await chai.request(app).post('/login').send(loginMock);
 
-    expect(chaiHttpResponse.status).to.be.equal(201);
-    expect(chaiHttpResponse.body).to.be.deep.equal(userMock);
+    expect(chaiHttpResponse.status).to.be.equal(200);
+    expect(chaiHttpResponse.body).to.have.own.property('token');
   });
 
 });
