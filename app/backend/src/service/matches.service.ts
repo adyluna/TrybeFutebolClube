@@ -6,6 +6,12 @@ export default class MatchesService {
   private _teamsAssociation = [{ model: Teams, as: 'teamHome', attributes: ['teamName'] },
     { model: Teams, as: 'teamAway', attributes: ['teamName'] }];
 
+  findById = async (id: number): Promise<IMatch> => {
+    const match = await MatchesModel.findByPk(id);
+
+    return match as IMatch;
+  };
+
   findAll = async (): Promise<IMatch[]> => {
     const matches = await MatchesModel
       .findAll({ include: this._teamsAssociation });
@@ -27,5 +33,12 @@ export default class MatchesService {
       .create({ homeTeam, awayTeam, homeTeamGoals, awayTeamGoals, inProgress: true });
 
     return dataValues;
+  };
+
+  finishMatch = async (id: number) => {
+    const [finishedMatch] = await MatchesModel.update({ inProgress: false }, { where: { id } });
+    console.log(finishedMatch);
+
+    return finishedMatch;
   };
 }
