@@ -7,6 +7,14 @@ export default class TeamsController {
   findAll = async (_req: Request, res: Response): Promise<Response> => {
     const teams = await this._teamService.findAll();
 
-    return res.status(200).json({ teams });
+    return res.status(200).json(teams);
+  };
+
+  findById = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.params;
+    const numberId = Number(id);
+    const { teamName } = await this._teamService.findById(id);
+
+    return res.status(200).json({ id: numberId, teamName });
   };
 }
