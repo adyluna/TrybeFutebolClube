@@ -17,10 +17,10 @@ export default class MatchesController {
   };
 
   insertMatch = async (req: Request, res: Response): Promise<Response> => {
-    // const { authorization } = req.headers;
+    const { authorization } = req.headers;
     const insertedMatch = await this._matchesService.insertMatch(req.body);
 
-    // this._jwt.validateToken(authorization as string);
+    this._jwt.validateToken(authorization as string);
 
     return res.status(201).json(insertedMatch);
   };
