@@ -17,12 +17,12 @@ export default class Jwt implements IJwt {
     return token;
   }
 
-  validateToken(token: string): string {
+  validateToken(token: string): IUser {
     try {
       const data = verify(token, this._jwtSecret) as IUser;
-      return data.role as string;
+      return data;
     } catch (error) {
-      throw new HttpException(401, 'Invalid Token');
+      throw new HttpException(401, 'Token must be a valid token');
     }
   }
 }

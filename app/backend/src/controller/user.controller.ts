@@ -12,7 +12,7 @@ export default class UserController {
 
   validateToken = (req: Request, res: Response) => {
     const { authorization } = req.headers;
-    const role = this._userService.validateLogin(authorization as string);
+    const { role } = this._userService.validateLogin(authorization as string);
 
     return res.status(200).json({ role });
   };
