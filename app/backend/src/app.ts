@@ -3,6 +3,7 @@ import * as express from 'express';
 import httpErrorMiddleware from './middlewares/http.error.middleware';
 import LoginRoute from './routes/login.route';
 import TeamsRoute from './routes/teams.route';
+import MatchesRoute from './routes/matches.route';
 
 class App {
   public app: express.Express;
@@ -16,6 +17,7 @@ class App {
     this.app.get('/', (req, res) => res.json({ ok: true }));
     this.app.use('/login', LoginRoute);
     this.app.use('/teams', TeamsRoute);
+    this.app.use('/matches', MatchesRoute);
     this.app.use(httpErrorMiddleware);
   }
 

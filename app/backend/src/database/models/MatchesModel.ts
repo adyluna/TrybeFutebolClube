@@ -26,7 +26,7 @@ Matches.init({
   awayTeam: {
     type: INTEGER,
   },
-  awayTeamsGoals: {
+  awayTeamGoals: {
     type: INTEGER,
   },
   inProgress: {
@@ -39,10 +39,10 @@ Matches.init({
   timestamps: false,
 });
 
-Matches.belongsTo(TeamsModel, { foreignKey: 'homeTeam', as: 'teams' });
-Matches.belongsTo(TeamsModel, { foreignKey: 'awayTeam', as: 'teams' });
+Matches.belongsTo(TeamsModel, { foreignKey: 'homeTeam', as: 'teamHome' });
+Matches.belongsTo(TeamsModel, { foreignKey: 'awayTeam', as: 'teamAway' });
 
 TeamsModel.hasMany(Matches, { foreignKey: 'homeTeam', as: 'matches' });
-TeamsModel.hasMany(Matches, { foreignKey: 'awayTeam', as: 'matches' });
+TeamsModel.hasMany(Matches, { foreignKey: 'awayTeam' });
 
 export default Matches;
