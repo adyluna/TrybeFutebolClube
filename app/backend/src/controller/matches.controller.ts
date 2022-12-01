@@ -29,7 +29,7 @@ export default class MatchesController {
     const { id } = req.params;
 
     const numberId = Number(id);
-    await this._matchesService.finishMatch(numberId);
+    await this._matchesService.finishMatch(numberId, req.path, req.body);
 
     return res.status(200).json({ message: 'Finished' });
   };

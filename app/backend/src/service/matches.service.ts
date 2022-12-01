@@ -35,9 +35,15 @@ export default class MatchesService {
     return dataValues;
   };
 
-  finishMatch = async (id: number) => {
-    const [finishedMatch] = await MatchesModel.update({ inProgress: false }, { where: { id } });
+  finishMatch = async (id: number, path: string, body: IMatch) => {
+    if (path.includes('finish')) {
+      const [finishedMatch] = await MatchesModel.update({ inProgress: false }, { where: { id } });
+      return finishedMatch;
+    }
 
-    return finishedMatch;
+    const { homeTeamGoals, awayTeamGoals } = body;
+    const [editedLeaderboard] = await MatchesModel
+      .update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
+    return editedLeaderboard;
   };
 }
