@@ -13,7 +13,7 @@ export default class TeamsService {
     const team = await TeamsModel.findByPk(id);
 
     if (!team) {
-      throw new HttpException(401, 'Invalid Team');
+      throw new HttpException(404, 'There is no team with such id!');
     }
 
     return team;

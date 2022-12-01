@@ -12,7 +12,14 @@ import {
   validUser,
   validLogin,
   loginWithoutEmail,
-  loginWithoutPassword, incorrectLoginEmail, incorrectLoginPassword, teamsMock, validTeam } from './mocks';
+  loginWithoutPassword,
+  incorrectLoginEmail,
+  incorrectLoginPassword,
+  teamsMock,
+  validTeam,
+  matchesMock,
+  inProgressMatches
+} from './mocks';
 
 chai.use(chaiHttp);
 
@@ -108,6 +115,22 @@ describe('Teams Integration Tests', () => {
   });
 });
 
-// describe('Matches Integration Tests', () => {
-  
-// });
+describe('Matches Integration Tests', () => {
+
+  beforeEach(() => {
+    sinon
+      .stub(MatchesModel, "findAll")
+      .resolves(matchesMock as unknown as MatchesModel[]);
+  });
+
+  afterEach(()=>{
+    (MatchesModel.findAll as sinon.SinonStub).restore();
+  });
+
+  it('should return all registred matches', async () => {
+    const chaiHttpResponse = await chai.request(app).get('/matches');
+
+    expect(chaiHttpResponse.status).to.be.equal(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(matchesMock);
+  });
+});

@@ -6,11 +6,11 @@ export default class MatchesService {
   private _teamsAssociation = [{ model: Teams, as: 'teamHome', attributes: ['teamName'] },
     { model: Teams, as: 'teamAway', attributes: ['teamName'] }];
 
-  findById = async (id: number): Promise<IMatch> => {
-    const match = await MatchesModel.findByPk(id);
+  // findById = async (id: number): Promise<IMatch> => {
+  //   const match = await MatchesModel.findByPk(id);
 
-    return match as IMatch;
-  };
+  //   return match as IMatch;
+  // };
 
   findAll = async (): Promise<IMatch[]> => {
     const matches = await MatchesModel
