@@ -33,4 +33,10 @@ export default class MatchesController {
 
     return res.status(200).json({ message: 'Finished' });
   };
+
+  leaderBoards = async (_req: Request, res: Response): Promise<Response> => {
+    const matches = await this._matchesService.leaderboard();
+
+    return res.status(200).json(matches);
+  };
 }

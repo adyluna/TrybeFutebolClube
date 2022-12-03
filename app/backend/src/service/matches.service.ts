@@ -1,10 +1,10 @@
 import IMatch from '../interfaces/match.interface';
 import MatchesModel from '../database/models/MatchesModel';
-import Teams from '../database/models/TeamsModel';
+import TeamsModel from '../database/models/TeamsModel';
 
 export default class MatchesService {
-  private _teamsAssociation = [{ model: Teams, as: 'teamHome', attributes: ['teamName'] },
-    { model: Teams, as: 'teamAway', attributes: ['teamName'] }];
+  private _teamsAssociation = [{ model: TeamsModel, as: 'teamHome', attributes: ['teamName'] },
+    { model: TeamsModel, as: 'teamAway', attributes: ['teamName'] }];
 
   // findById = async (id: number): Promise<IMatch> => {
   //   const match = await MatchesModel.findByPk(id);
@@ -45,5 +45,23 @@ export default class MatchesService {
     const [editedLeaderboard] = await MatchesModel
       .update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
     return editedLeaderboard;
+  };
+
+  leaderboard = async () => {
+    // const matches = await MatchesModel
+    //   .findAll({
+    //     where: { inProgress: false },
+    //     include: this._teamsAssociation });
+
+    const teams = await TeamsModel.findAll();
+    const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
+      const teamMatches = await MatchesModel.findAll({
+        where: { inProgress: false, homeTeam: id },
+        include: this._teamsAssociation });
+
+      return teamMatches;
+    }));
+
+    return filteredMatches;
   };
 }
