@@ -1,47 +1,56 @@
 import IMatch from '../interfaces/match.interface';
 
-const Statistics = (teamMatches: IMatch[]) => {
-  let totalPoints = 0;
-  let totalGames = 0;
-  let totalVictories = 0;
-  let totalDraws = 0;
-  let totalLosses = 0;
-  let goalsFavor = 0;
-  let goalsOwn = 0;
-  let goalsBalance = 0;
-  let efficiency = 0;
+export default class Statistics {
+  name: string;
+  totalPoints = 0;
+  totalGames = 0;
+  totalVictories = 0;
+  totalDraws = 0;
+  totalLosses = 0;
+  goalsFavor = 0;
+  goalsOwn = 0;
+  goalsBalance = 0;
+  efficiency = '';
 
-  teamMatches.forEach((element: IMatch) => {
-    if (element.homeTeamGoals as number > element.awayTeamGoals as number) {
-      totalPoints += 3;
-      totalVictories += 1;
-    }
-    if (element.homeTeamGoals as number === element.awayTeamGoals as number) {
-      totalPoints += 1;
-      totalDraws += 1;
-    }
-    if (element.homeTeamGoals as number < element.awayTeamGoals as number) {
-      totalLosses += 1;
-    }
-    totalGames += 1;
-    goalsFavor += element.homeTeamGoals as number;
-    goalsOwn += element.awayTeamGoals as number;
-  });
-  goalsBalance = goalsFavor - goalsOwn;
-  efficiency = (totalPoints / (totalGames * 3)) * 100;
-
-  return {
-    name: teamMatches[0].teamHome.teamName as string,
-    totalPoints,
-    totalGames,
-    totalVictories,
-    totalDraws,
-    totalLosses,
-    goalsFavor,
-    goalsOwn,
-    goalsBalance,
-    efficiency,
+  constructor(private teamMatches: IMatch[]) {
+    this.name = teamMatches[0].teamHome.teamName;
   }
-};
 
-export default Statistics;
+  calculate() {
+    this.teamMatches.map((element: IMatch) => {
+      if (element.homeTeamGoals > element.awayTeamGoals) {
+        this.totalPoints += 3;
+        this.totalVictories += 1;
+      }
+      if (element.homeTeamGoals === element.awayTeamGoals) {
+        this.totalPoints += 1;
+        this.totalDraws += 1;
+      }
+      if (element.homeTeamGoals < element.awayTeamGoals) {
+        this.totalLosses += 1;
+      }
+      this.totalGames += 1;
+      this.goalsFavor += element.homeTeamGoals;
+      this.goalsOwn += element.awayTeamGoals;
+      return true;
+    });
+  }
+
+  result() {
+    this.goalsBalance = this.goalsFavor - this.goalsOwn;
+    this.efficiency = (Math
+      .round(((this.totalPoints / (this.totalGames * 3)) * 100) * 100) / 100).toFixed(2);
+    return ({
+      name: this.name,
+      totalPoints: this.totalPoints,
+      totalGames: this.totalGames,
+      totalVictories: this.totalVictories,
+      totalDraws: this.totalDraws,
+      totalLosses: this.totalLosses,
+      goalsFavor: this.goalsFavor,
+      goalsOwn: this.goalsOwn,
+      goalsBalance: this.goalsBalance,
+      efficiency: this.efficiency,
+    });
+  }
+}

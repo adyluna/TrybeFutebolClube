@@ -7,7 +7,7 @@ export default class MatchesService {
   private _teamsAssociation = [{ model: TeamsModel, as: 'teamHome', attributes: ['teamName'] },
     { model: TeamsModel, as: 'teamAway', attributes: ['teamName'] }];
 
-  findAll = async (): Promise<IMatch[]> => {
+  findAll = async (): Promise<MatchesModel[]> => {
     const matches = await MatchesModel
       .findAll({ include: this._teamsAssociation });
 
@@ -42,12 +42,7 @@ export default class MatchesService {
     return editedLeaderboard;
   };
 
-  leaderboard = async () => {
-    // const matches = await MatchesModel
-    //   .findAll({
-    //     where: { inProgress: false },
-    //     include: this._teamsAssociation });
-
+  homeTeams = async () => {
     const teams = await TeamsModel.findAll();
     const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
       const teamMatches = await MatchesModel.findAll({
@@ -56,11 +51,28 @@ export default class MatchesService {
 
       return teamMatches;
     }));
-
-    const result = filteredMatches
-      .map((elem) => elem.map((teamMatches) => Statistics(teamMatches as unknown as IMatch[])));
-    console.log(result);
-
     return filteredMatches;
+  };
+
+  leaderboard = async () => {
+    const filteredMatches = await this.homeTeams();
+    const result = filteredMatches
+      .map((teamMatches) => {
+        const teamMatchesService = new Statistics(teamMatches as unknown as IMatch[]);
+        teamMatchesService.calculate();
+        return teamMatchesService.result();
+      });
+
+    result.sort((a, b) => {
+      if (a.totalPoints === b.totalPoints) {
+        if (a.goalsBalance === b.goalsBalance) {
+          return b.goalsFavor - a.goalsFavor;
+        }
+        return b.goalsBalance - a.goalsBalance;
+      }
+      return b.totalPoints - a.totalPoints;
+    });
+
+    return result;
   };
 }
