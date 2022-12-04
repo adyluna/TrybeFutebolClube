@@ -10,5 +10,6 @@ const matchesController = new MatchesController(matchesService, jwt);
 const router = Router();
 
 router.get('/home', matchesController.leaderBoards);
+router.get('/away', matchesController.leaderBoards);
 
 export default router;

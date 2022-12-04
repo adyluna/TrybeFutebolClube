@@ -8,11 +8,24 @@ export default interface IMatch {
   teamHome: {
     teamName: string;
   },
-  teamAway?: {
+  teamAway: {
     teamName: string;
   },
 }
 
 export interface IMatchTeamName {
   teamName: string;
+}
+
+export interface IMatchStatistics {
+  name: string;
+  totalPoints: number;
+  totalGames: number;
+  totalVictories: number;
+  totalDraws: number;
+  totalLosses: number;
+  goalsFavor: number;
+  goalsOwn: number;
+  goalsBalance: number;
+  efficiency: string;
 }

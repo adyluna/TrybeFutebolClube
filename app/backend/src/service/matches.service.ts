@@ -1,4 +1,4 @@
-import IMatch from '../interfaces/match.interface';
+import IMatch, { IMatchStatistics } from '../interfaces/match.interface';
 import MatchesModel from '../database/models/MatchesModel';
 import TeamsModel from '../database/models/TeamsModel';
 import Statistics from '../utils/Statistics';
@@ -42,27 +42,7 @@ export default class MatchesService {
     return editedLeaderboard;
   };
 
-  homeTeams = async () => {
-    const teams = await TeamsModel.findAll();
-    const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
-      const teamMatches = await MatchesModel.findAll({
-        where: { inProgress: false, homeTeam: id },
-        include: this._teamsAssociation });
-
-      return teamMatches;
-    }));
-    return filteredMatches;
-  };
-
-  leaderboard = async () => {
-    const filteredMatches = await this.homeTeams();
-    const result = filteredMatches
-      .map((teamMatches) => {
-        const teamMatchesService = new Statistics(teamMatches as unknown as IMatch[]);
-        teamMatchesService.calculate();
-        return teamMatchesService.result();
-      });
-
+  sortResult = (result: IMatchStatistics[]) => {
     result.sort((a, b) => {
       if (a.totalPoints === b.totalPoints) {
         if (a.goalsBalance === b.goalsBalance) {
@@ -72,6 +52,36 @@ export default class MatchesService {
       }
       return b.totalPoints - a.totalPoints;
     });
+  };
+
+  filterTeamsMatches = async (path: string) => {
+    const home = path.includes('home');
+    const teams = await TeamsModel.findAll();
+    const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
+      const teamMatches = await MatchesModel.findAll({
+        where: home ? { inProgress: false, homeTeam: id } : { inProgress: false, awayTeam: id },
+        include: this._teamsAssociation });
+
+      return teamMatches;
+    }));
+    return filteredMatches;
+  };
+
+  leaderboard = async (path: string) => {
+    const home = path.includes('home');
+    const filteredMatches = await this.filterTeamsMatches(path);
+    const result = filteredMatches
+      .map((teamMatches) => {
+        const teamMatchesService = new Statistics(path, teamMatches as unknown as IMatch[]);
+        if (home) {
+          teamMatchesService.calculateHomeTeamsStatistics();
+        } else {
+          teamMatchesService.calculateAwayTeamsStatistics();
+        }
+        return teamMatchesService.result();
+      });
+
+    this.sortResult(result);
 
     return result;
   };

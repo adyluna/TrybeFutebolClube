@@ -12,11 +12,12 @@ export default class Statistics {
   goalsBalance = 0;
   efficiency = '';
 
-  constructor(private teamMatches: IMatch[]) {
-    this.name = teamMatches[0].teamHome.teamName;
+  constructor(private path: string, private teamMatches: IMatch[]) {
+    const home = this.path.includes('home');
+    this.name = home ? teamMatches[0].teamHome.teamName : teamMatches[0].teamAway.teamName;
   }
 
-  calculate() {
+  calculateHomeTeamsStatistics() {
     this.teamMatches.map((element: IMatch) => {
       if (element.homeTeamGoals > element.awayTeamGoals) {
         this.totalPoints += 3;
@@ -32,6 +33,26 @@ export default class Statistics {
       this.totalGames += 1;
       this.goalsFavor += element.homeTeamGoals;
       this.goalsOwn += element.awayTeamGoals;
+      return true;
+    });
+  }
+
+  calculateAwayTeamsStatistics() {
+    this.teamMatches.map((element: IMatch) => {
+      if (element.awayTeamGoals > element.homeTeamGoals) {
+        this.totalPoints += 3;
+        this.totalVictories += 1;
+      }
+      if (element.awayTeamGoals === element.homeTeamGoals) {
+        this.totalPoints += 1;
+        this.totalDraws += 1;
+      }
+      if (element.awayTeamGoals < element.homeTeamGoals) {
+        this.totalLosses += 1;
+      }
+      this.totalGames += 1;
+      this.goalsFavor += element.awayTeamGoals;
+      this.goalsOwn += element.homeTeamGoals;
       return true;
     });
   }
