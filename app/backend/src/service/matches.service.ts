@@ -1,16 +1,11 @@
 import IMatch from '../interfaces/match.interface';
 import MatchesModel from '../database/models/MatchesModel';
 import TeamsModel from '../database/models/TeamsModel';
+import Statistics from '../utils/Statistics';
 
 export default class MatchesService {
   private _teamsAssociation = [{ model: TeamsModel, as: 'teamHome', attributes: ['teamName'] },
     { model: TeamsModel, as: 'teamAway', attributes: ['teamName'] }];
-
-  // findById = async (id: number): Promise<IMatch> => {
-  //   const match = await MatchesModel.findByPk(id);
-
-  //   return match as IMatch;
-  // };
 
   findAll = async (): Promise<IMatch[]> => {
     const matches = await MatchesModel
@@ -61,6 +56,10 @@ export default class MatchesService {
 
       return teamMatches;
     }));
+
+    const result = filteredMatches
+      .map((elem) => elem.map((teamMatches) => Statistics(teamMatches as unknown as IMatch[])));
+    console.log(result);
 
     return filteredMatches;
   };

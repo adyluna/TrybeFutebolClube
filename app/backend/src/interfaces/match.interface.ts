@@ -12,3 +12,7 @@ export default interface IMatch {
     teamName: string;
   },
 }
+
+export interface IMatchTeamName {
+  teamName: string;
+}
