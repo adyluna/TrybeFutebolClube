@@ -13,8 +13,12 @@ export default class Statistics {
   efficiency = '';
 
   constructor(private path: string, private teamMatches: IMatch[]) {
-    const home = this.path.includes('home');
-    this.name = home ? teamMatches[0].teamHome.teamName : teamMatches[0].teamAway.teamName;
+    const away = this.path.includes('away');
+    if (away) {
+      this.name = teamMatches[0].teamAway.teamName;
+    } else {
+      this.name = teamMatches[0].teamHome.teamName;
+    }
   }
 
   calculateHomeTeamsStatistics() {

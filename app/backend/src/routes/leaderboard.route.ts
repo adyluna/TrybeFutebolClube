@@ -11,5 +11,6 @@ const router = Router();
 
 router.get('/home', matchesController.leaderBoards);
 router.get('/away', matchesController.leaderBoards);
+router.get('/', matchesController.leaderBoards);
 
 export default router;

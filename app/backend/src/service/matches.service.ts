@@ -67,16 +67,32 @@ export default class MatchesService {
     return filteredMatches;
   };
 
+  // homeTeam || awayTeam: id
+
+  teamsMatches = async () => {
+    const teams = await TeamsModel.findAll();
+    const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
+      const teamMatches = await MatchesModel.findAll({
+        where: { inProgress: false, homeTeam: id },
+        include: this._teamsAssociation });
+      return teamMatches;
+    }));
+
+    return filteredMatches;
+  };
+
   leaderboard = async (path: string) => {
+    const away = path.includes('away');
     const home = path.includes('home');
-    const filteredMatches = await this.filterTeamsMatches(path);
+    const filteredMatches = away || home
+      ? await this.filterTeamsMatches(path) : await this.teamsMatches();
     const result = filteredMatches
       .map((teamMatches) => {
         const teamMatchesService = new Statistics(path, teamMatches as unknown as IMatch[]);
-        if (home) {
-          teamMatchesService.calculateHomeTeamsStatistics();
-        } else {
+        if (away) {
           teamMatchesService.calculateAwayTeamsStatistics();
+        } else {
+          teamMatchesService.calculateHomeTeamsStatistics();
         }
         return teamMatchesService.result();
       });
