@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import IMatch, { IMatchStatistics } from '../interfaces/match.interface';
 import MatchesModel from '../database/models/MatchesModel';
 import TeamsModel from '../database/models/TeamsModel';
@@ -42,10 +43,13 @@ export default class MatchesService {
     return editedLeaderboard;
   };
 
-  sortResult = (result: IMatchStatistics[]) => {
+  private sortResult = (result: IMatchStatistics[]) => {
     result.sort((a, b) => {
       if (a.totalPoints === b.totalPoints) {
         if (a.goalsBalance === b.goalsBalance) {
+          if (a.goalsFavor === b.goalsFavor) {
+            return b.goalsOwn - a.goalsOwn;
+          }
           return b.goalsFavor - a.goalsFavor;
         }
         return b.goalsBalance - a.goalsBalance;
@@ -54,7 +58,7 @@ export default class MatchesService {
     });
   };
 
-  filterTeamsMatches = async (path: string) => {
+  private filterTeamsMatches = async (path: string) => {
     const home = path.includes('home');
     const teams = await TeamsModel.findAll();
     const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
@@ -67,13 +71,15 @@ export default class MatchesService {
     return filteredMatches;
   };
 
-  // homeTeam || awayTeam: id
-
-  teamsMatches = async () => {
+  private teamsMatches = async () => {
     const teams = await TeamsModel.findAll();
     const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
       const teamMatches = await MatchesModel.findAll({
-        where: { inProgress: false, homeTeam: id },
+        where: { inProgress: false,
+          [Op.or]: [
+            { homeTeam: id },
+            { awayTeam: id },
+          ] },
         include: this._teamsAssociation });
       return teamMatches;
     }));
@@ -81,11 +87,8 @@ export default class MatchesService {
     return filteredMatches;
   };
 
-  leaderboard = async (path: string) => {
+  private calculateStatistcs = (filteredMatches: MatchesModel[][], path: string) => {
     const away = path.includes('away');
-    const home = path.includes('home');
-    const filteredMatches = away || home
-      ? await this.filterTeamsMatches(path) : await this.teamsMatches();
     const result = filteredMatches
       .map((teamMatches) => {
         const teamMatchesService = new Statistics(path, teamMatches as unknown as IMatch[]);
@@ -96,6 +99,17 @@ export default class MatchesService {
         }
         return teamMatchesService.result();
       });
+
+    return result;
+  };
+
+  leaderboard = async (path: string) => {
+    const away = path.includes('away');
+    const home = path.includes('home');
+    const filteredMatches = away || home
+      ? await this.filterTeamsMatches(path) : await this.teamsMatches();
+
+    const result = this.calculateStatistcs(filteredMatches, path);
 
     this.sortResult(result);
 

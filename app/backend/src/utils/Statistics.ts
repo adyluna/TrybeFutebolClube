@@ -17,9 +17,12 @@ export default class Statistics {
     if (away) {
       this.name = teamMatches[0].teamAway.teamName;
     } else {
-      this.name = teamMatches[0].teamHome.teamName;
+      this.name = teamMatches[0].teamHome.teamName || teamMatches[0].teamAway.teamName;
     }
   }
+
+  // Essa classe tem que receber o id do time para comparar com o teamMatch e decidir qual funcao usar, se home ou away
+  // Tambem é preciso alterar as funcoes de home e away para que seja chamadas dentro de um map e nao o contrario
 
   calculateHomeTeamsStatistics() {
     this.teamMatches.map((element: IMatch) => {
