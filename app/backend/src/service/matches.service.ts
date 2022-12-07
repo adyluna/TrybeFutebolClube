@@ -95,12 +95,14 @@ export default class MatchesService {
         const teamMatchesService = new Statistics(teamMatches as unknown as ICalcMatches, path);
         if (away) {
           teamMatchesService.calculateAwayTeamsStatistics();
+          return teamMatchesService.result();
         }
         if (home) {
           teamMatchesService.calculateHomeTeamsStatistics();
-        } else {
-          teamMatchesService.calculateStatistics();
+          return teamMatchesService.result();
         }
+
+        teamMatchesService.calculateStatistics();
         return teamMatchesService.result();
       });
 
