@@ -1,5 +1,7 @@
 import IMatch, { ICalcMatches } from '../interfaces/match.interface';
 
+// Entrei
+
 export default class Statistics {
   id: number;
   name: string;
