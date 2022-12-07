@@ -1,13 +1,48 @@
-# :construction: README customizado em construção ! :construction:
-<!-- Olá, Tryber!
-Esse é apenas um arquivo inicial para o README do seu projeto no qual você pode customizar e reutilizar todas as vezes que for executar o trybe-publisher.
+# TrybeFutebolClube
 
-Para deixá-lo com a sua cara, basta alterar o seguinte arquivo da sua máquina: ~/.student-repo-publisher/custom/_NEW_README.md
+# Contexto
 
-É essencial que você preencha esse documento por conta própria, ok?
-Não deixe de usar nossas dicas de escrita de README de projetos, e deixe sua criatividade brilhar!
-:warning: IMPORTANTE: você precisa deixar nítido:
-- quais arquivos/pastas foram desenvolvidos por você; 
-- quais arquivos/pastas foram desenvolvidos por outra pessoa estudante;
-- quais arquivos/pastas foram desenvolvidos pela Trybe.
--->
+Foi construido um back-end dockerizado utilizando modelagem de dados através do Sequelize, aplicando regras de negocio para que a API seja consumida pelo front-end e as tabelas populadas adequadamente. 
+
+Nesse sentido, neste projeto é possível:
+
+* Adicionar e Editar partidas;
+* Ver Partidas finalizadas e Em andamento;
+* Ver a Classificação Geral, Classificação dos Mandantes e Classificação dos Visitantes.
+
+## Técnologias usadas
+
+React
+
+Javascript
+
+Typescript
+
+Node.Js
+
+Docker
+
+MySql
+
+POO
+
+SOLID
+
+TDD
+
+## Antes de começar
+
+Clone o repositório
+
+  - `git@github.com:adyluna/DungeonsAndDragons.git`.
+
+## Instalando Dependências
+
+  - Entre na pasta do repositório que você acabou de clonar:
+    - `cd DungeonsAndDragons`
+    -  `npm install`
+
+## Executando aplicação
+
+    - No arquivo src/index.ts estão alguns exemplos de classes e monstros criadas e postos para batalhar. Sinta-se livre para edita-lo criando novos personagens e monstros. Para simular a batalha, basta inserir os personagens criados dentro da funcão `runBattles`;
+    - npm start
