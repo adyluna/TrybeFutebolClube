@@ -31,18 +31,29 @@ SOLID
 TDD
 
 ## Antes de começar
+<details>
+<summary><strong> ⚠️ Configurações mínimas para execução do projeto</strong></summary><br />
+
+Na sua máquina você deve ter:
+
+ - Sistema Operacional Distribuição Unix
+ - Node versão 16
+ - Docker
+ - Docker-compose versão >=1.29.2
+
+</details>
 
 Clone o repositório
 
-  - `git@github.com:adyluna/DungeonsAndDragons.git`.
+  - `git clone git@github.com:adyluna/TrybeFutebolClube.git`.
 
 ## Instalando Dependências
 
   - Entre na pasta do repositório que você acabou de clonar:
-    - `cd DungeonsAndDragons`
+    - `cd TrybeFutebolClube`
     -  `npm install`
 
 ## Executando aplicação
 
-    - No arquivo src/index.ts estão alguns exemplos de classes e monstros criadas e postos para batalhar. Sinta-se livre para edita-lo criando novos personagens e monstros. Para simular a batalha, basta inserir os personagens criados dentro da funcão `runBattles`;
-    - npm start
+    - npm run compose:up:dev
+    - A aplicação vai rodar na porta 3000, então basta acessa-la através do seu navegador de preferência.
