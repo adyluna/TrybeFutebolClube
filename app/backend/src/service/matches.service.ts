@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import IMatch, { IMatchStatistics } from '../interfaces/match.interface';
+import IMatch, { ICalcMatches, IMatchStatistics } from '../interfaces/match.interface';
 import MatchesModel from '../database/models/MatchesModel';
 import TeamsModel from '../database/models/TeamsModel';
 import Statistics from '../utils/Statistics';
@@ -61,19 +61,19 @@ export default class MatchesService {
   private filterTeamsMatches = async (path: string) => {
     const home = path.includes('home');
     const teams = await TeamsModel.findAll();
-    const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
+    const filteredMatches = await Promise.all(teams.map(async ({ id, teamName }) => {
       const teamMatches = await MatchesModel.findAll({
         where: home ? { inProgress: false, homeTeam: id } : { inProgress: false, awayTeam: id },
         include: this._teamsAssociation });
 
-      return teamMatches;
+      return { id, teamName, teamMatches };
     }));
     return filteredMatches;
   };
 
   private teamsMatches = async () => {
     const teams = await TeamsModel.findAll();
-    const filteredMatches = await Promise.all(teams.map(async ({ id }) => {
+    const filteredMatches = await Promise.all(teams.map(async ({ id, teamName }) => {
       const teamMatches = await MatchesModel.findAll({
         where: { inProgress: false,
           [Op.or]: [
@@ -81,21 +81,25 @@ export default class MatchesService {
             { awayTeam: id },
           ] },
         include: this._teamsAssociation });
-      return teamMatches;
+      return { id, teamName, teamMatches };
     }));
 
     return filteredMatches;
   };
 
-  private calculateStatistcs = (filteredMatches: MatchesModel[][], path: string) => {
+  private calculateStatistcs = (filteredMatches: MatchesModel[], path: string) => {
     const away = path.includes('away');
+    const home = path.includes('home');
     const result = filteredMatches
       .map((teamMatches) => {
-        const teamMatchesService = new Statistics(path, teamMatches as unknown as IMatch[]);
+        const teamMatchesService = new Statistics(teamMatches as unknown as ICalcMatches, path);
         if (away) {
           teamMatchesService.calculateAwayTeamsStatistics();
-        } else {
+        }
+        if (home) {
           teamMatchesService.calculateHomeTeamsStatistics();
+        } else {
+          teamMatchesService.calculateStatistics();
         }
         return teamMatchesService.result();
       });
@@ -109,7 +113,7 @@ export default class MatchesService {
     const filteredMatches = away || home
       ? await this.filterTeamsMatches(path) : await this.teamsMatches();
 
-    const result = this.calculateStatistcs(filteredMatches, path);
+    const result = this.calculateStatistcs(filteredMatches as unknown as MatchesModel[], path);
 
     this.sortResult(result);
 

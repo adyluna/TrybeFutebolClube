@@ -1,6 +1,7 @@
-import IMatch from '../interfaces/match.interface';
+import IMatch, { ICalcMatches } from '../interfaces/match.interface';
 
 export default class Statistics {
+  id: number;
   name: string;
   totalPoints = 0;
   totalGames = 0;
@@ -12,55 +13,60 @@ export default class Statistics {
   goalsBalance = 0;
   efficiency = '';
 
-  constructor(private path: string, private teamMatches: IMatch[]) {
-    const away = this.path.includes('away');
-    if (away) {
-      this.name = teamMatches[0].teamAway.teamName;
-    } else {
-      this.name = teamMatches[0].teamHome.teamName || teamMatches[0].teamAway.teamName;
-    }
+  constructor(private matches: ICalcMatches, private path: string) {
+    this.id = matches.id;
+    this.name = matches.teamName;
   }
 
-  // Essa classe tem que receber o id do time para comparar com o teamMatch e decidir qual funcao usar, se home ou away
-  // Tambem é preciso alterar as funcoes de home e away para que seja chamadas dentro de um map e nao o contrario
+  private homeCalc(match: IMatch) {
+    if (match.homeTeamGoals > match.awayTeamGoals) {
+      this.totalPoints += 3;
+      this.totalVictories += 1;
+    }
+    if (match.homeTeamGoals === match.awayTeamGoals) {
+      this.totalPoints += 1;
+      this.totalDraws += 1;
+    }
+    if (match.homeTeamGoals < match.awayTeamGoals) {
+      this.totalLosses += 1;
+    }
+    this.totalGames += 1;
+    this.goalsFavor += match.homeTeamGoals;
+    this.goalsOwn += match.awayTeamGoals;
+    return true;
+  }
+
+  private awayCalc(match: IMatch) {
+    if (match.awayTeamGoals > match.homeTeamGoals) {
+      this.totalPoints += 3;
+      this.totalVictories += 1;
+    }
+    if (match.awayTeamGoals === match.homeTeamGoals) {
+      this.totalPoints += 1;
+      this.totalDraws += 1;
+    }
+    if (match.awayTeamGoals < match.homeTeamGoals) {
+      this.totalLosses += 1;
+    }
+    this.totalGames += 1;
+    this.goalsFavor += match.awayTeamGoals;
+    this.goalsOwn += match.homeTeamGoals;
+    return true;
+  }
 
   calculateHomeTeamsStatistics() {
-    this.teamMatches.map((element: IMatch) => {
-      if (element.homeTeamGoals > element.awayTeamGoals) {
-        this.totalPoints += 3;
-        this.totalVictories += 1;
-      }
-      if (element.homeTeamGoals === element.awayTeamGoals) {
-        this.totalPoints += 1;
-        this.totalDraws += 1;
-      }
-      if (element.homeTeamGoals < element.awayTeamGoals) {
-        this.totalLosses += 1;
-      }
-      this.totalGames += 1;
-      this.goalsFavor += element.homeTeamGoals;
-      this.goalsOwn += element.awayTeamGoals;
-      return true;
-    });
+    this.matches.teamMatches.map((match: IMatch) => this.homeCalc(match));
   }
 
   calculateAwayTeamsStatistics() {
-    this.teamMatches.map((element: IMatch) => {
-      if (element.awayTeamGoals > element.homeTeamGoals) {
-        this.totalPoints += 3;
-        this.totalVictories += 1;
-      }
-      if (element.awayTeamGoals === element.homeTeamGoals) {
-        this.totalPoints += 1;
-        this.totalDraws += 1;
-      }
-      if (element.awayTeamGoals < element.homeTeamGoals) {
-        this.totalLosses += 1;
-      }
-      this.totalGames += 1;
-      this.goalsFavor += element.awayTeamGoals;
-      this.goalsOwn += element.homeTeamGoals;
-      return true;
+    this.matches.teamMatches.map((match: IMatch) => this.awayCalc(match));
+  }
+
+  calculateStatistics() {
+    this.matches.teamMatches.map((match: IMatch) => {
+      if (match.homeTeam === this.id) {
+        return this.homeCalc(match);
+      } return this.awayCalc(match);
     });
   }
 

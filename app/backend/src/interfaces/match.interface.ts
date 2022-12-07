@@ -17,6 +17,12 @@ export interface IMatchTeamName {
   teamName: string;
 }
 
+export interface ICalcMatches {
+  id: number;
+  teamName: string;
+  teamMatches: IMatch[];
+}
+
 export interface IMatchStatistics {
   name: string;
   totalPoints: number;
