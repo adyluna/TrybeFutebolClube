@@ -10,7 +10,7 @@ Nesse sentido, neste projeto é possível:
 * Ver Partidas finalizadas e Em andamento;
 * Ver a Classificação Geral, Classificação dos Mandantes e Classificação dos Visitantes.
 
-## Técnologias usadas
+## Tecnologias usadas
 
 React
 
